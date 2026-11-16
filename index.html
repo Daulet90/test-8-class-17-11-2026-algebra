@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05070f">
+<title>Квадрат үшмүше және оның түбірлері · 8-сынып</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;700;800&family=Rubik:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* ============ БАЗА / ТЁМНАЯ ТЕМА ============ */
+:root{
+  --bg0:#05070f; --bg1:#0a0f1e;
+  --panel:rgba(16,24,46,.92); --line:rgba(120,160,255,.14);
+  --txt:#e8eeff; --mut:#8b9bc4;
+  --cyan:#33e6ff; --lime:#8dff57; --pink:#ff4dd2;
+  --amber:#ffc44d; --red:#ff4d6b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{touch-action:manipulation}
+body{
+  font-family:'Rubik',system-ui,sans-serif;background:var(--bg0);color:var(--txt);
+  overflow-x:hidden;overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;
+}
+button{touch-action:manipulation;-webkit-touch-callout:none;user-select:none}
+
+/* ============ ФОН: СЛОИ, СЕТКА, СИМВОЛЫ ============ */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  background:
+    radial-gradient(1100px 620px at 85% -10%, rgba(51,230,255,.10), transparent 60%),
+    radial-gradient(900px 540px at -10% 100%, rgba(255,77,210,.09), transparent 60%),
+    linear-gradient(180deg,#05070f 0%,#080d1c 55%,#05070f 100%);
+}
+.bg::before{content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(90,140,255,.055) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(90,140,255,.055) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 78%);
+          mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 78%);
+}
+.glow{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;animation:breathe 9s ease-in-out infinite}
+.g1{width:340px;height:340px;left:-120px;top:8%;background:rgba(51,230,255,.16)}
+.g2{width:300px;height:300px;right:-110px;top:42%;background:rgba(255,77,210,.13);animation-delay:-3s}
+.g3{width:380px;height:380px;left:18%;bottom:-170px;background:rgba(141,255,87,.10);animation-delay:-6s}
+@keyframes breathe{50%{transform:scale(1.18);opacity:.75}}
+.fx{position:absolute;font-family:'Unbounded',sans-serif;font-weight:700;color:rgba(140,190,255,.07);
+  animation:drift 16s ease-in-out infinite;user-select:none}
+.f1{font-size:110px;left:4%;top:10%}
+.f2{font-size:70px;right:8%;top:6%;animation-delay:-4s}
+.f3{font-size:90px;left:66%;top:44%;animation-delay:-8s}
+.f4{font-size:64px;left:8%;top:58%;animation-delay:-2s}
+.f5{font-size:78px;right:10%;bottom:12%;animation-delay:-6s}
+.f6{font-size:56px;left:36%;bottom:5%;animation-delay:-10s}
+@keyframes drift{50%{transform:translateY(-26px) rotate(6deg)}}
+
+/* ============ КАРКАС / ЭКРАНЫ ============ */
+.wrap{position:relative;z-index:1;max-width:560px;margin:0 auto;min-height:100dvh;
+  padding:18px 16px calc(30px + env(safe-area-inset-bottom))}
+.screen{display:none}
+.screen.on{display:block;animation:rise .5s cubic-bezier(.2,.8,.25,1)}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+
+.panel{position:relative;background:linear-gradient(180deg,rgba(16,24,46,.92),rgba(10,15,30,.94));
+  border:1px solid var(--line);border-radius:22px;padding:22px 20px;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.panel::before{content:'';position:absolute;top:0;left:18px;right:18px;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.7}
+.ru{font-style:italic;color:var(--mut);font-weight:400}
+
+/* ============ ЧИПЫ / ЗАГОЛОВКИ ============ */
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:99px;
+  font:600 10.5px 'Unbounded';letter-spacing:.8px;text-transform:uppercase;border:1px solid}
+.chip-cyan{color:var(--cyan);border-color:rgba(51,230,255,.45);background:rgba(51,230,255,.08);box-shadow:0 0 12px rgba(51,230,255,.15)}
+.chip-pink{color:var(--pink);border-color:rgba(255,77,210,.45);background:rgba(255,77,210,.08);box-shadow:0 0 12px rgba(255,77,210,.15)}
+.chip-amber{color:var(--amber);border-color:rgba(255,196,77,.5);background:rgba(255,196,77,.08)}
+.chip-line{color:var(--mut);border-color:var(--line);background:rgba(120,160,255,.05)}
+
+.top-tag{display:flex;gap:8px;flex-wrap:wrap}
+.title{font:800 clamp(26px,7vw,38px)/1.16 'Unbounded';margin:14px 0 6px;text-shadow:0 0 24px rgba(51,230,255,.25)}
+.title em{font-style:normal;color:var(--cyan)}
+.title-ru{font:italic 500 15px 'Rubik';color:var(--mut);margin-bottom:16px}
+
+.formula-strip{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 16px;
+  font:500 12.5px 'Unbounded';color:rgba(160,200,255,.85)}
+.formula-strip span{padding:7px 12px;border:1px dashed rgba(51,230,255,.35);border-radius:10px;
+  background:rgba(51,230,255,.05);text-shadow:0 0 10px rgba(51,230,255,.35)}
+.formula-strip i{color:var(--pink);font-style:normal}
+
+.teacher{display:flex;gap:14px;align-items:center;margin:0 0 16px;padding:14px 16px;
+  border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(120deg,rgba(255,77,210,.07),rgba(51,230,255,.06))}
+.t-ico{flex:0 0 46px;height:46px;display:grid;place-items:center;font:700 22px 'Unbounded';
+  color:var(--pink);border:1px solid rgba(255,77,210,.4);border-radius:12px;
+  background:rgba(255,77,210,.08);box-shadow:0 0 16px rgba(255,77,210,.2)}
+.teacher small{display:block;font:500 10.5px 'Rubik';letter-spacing:.6px;text-transform:uppercase;color:var(--mut);margin-bottom:3px}
+.teacher b{font:600 15px 'Rubik'}
+
+/* ============ ФОРМЫ ============ */
+label{display:block;font:600 13px 'Rubik';color:var(--mut);letter-spacing:.3px;margin-bottom:14px}
+label .ru{font-size:12px;opacity:.8}
+input[type=text],select{width:100%;margin-top:7px;padding:13px 14px;border-radius:12px;
+  background:#0a1122;border:1px solid var(--line);color:var(--txt);font:500 16px 'Rubik';
+  outline:none;transition:.25s;appearance:none;-webkit-appearance:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2333e6ff' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center}
+input[type=text]:focus,select:focus{border-color:var(--cyan);
+  box-shadow:0 0 0 1px var(--cyan),0 0 16px rgba(51,230,255,.3)}
+.row2{display:grid;grid-template-columns:1fr 1.3fr;gap:12px}
+.att-hint{min-height:16px;font:500 12.5px 'Rubik';color:var(--mut);margin:-4px 0 12px}
+.att-hint.warned{color:var(--amber)}
+.foot-note{margin-top:14px;text-align:center;font:400 12px 'Rubik';color:var(--mut);opacity:.8}
+
+/* ============ КНОПКИ (НЕОН) ============ */
+.btn{display:flex;justify-content:center;align-items:center;gap:8px;width:100%;
+  padding:15px 18px;border-radius:14px;font:700 14px 'Unbounded';letter-spacing:.4px;
+  border:1px solid var(--line);background:rgba(13,20,38,.85);color:var(--mut);
+  cursor:pointer;transition:.25s}
+.btn .ru{font:italic 500 12px 'Rubik';opacity:.8;letter-spacing:0}
+.btn:disabled{opacity:.38;cursor:not-allowed}
+.btn-primary.lit{color:#06180a;background:linear-gradient(135deg,#9dff5e,#35e07e);border-color:#9dff5e;
+  box-shadow:0 0 16px rgba(141,255,87,.5),0 0 44px rgba(141,255,87,.22),0 8px 26px rgba(0,0,0,.45)}
+.btn-primary.lit:hover{transform:translateY(-2px);box-shadow:0 0 22px rgba(141,255,87,.65),0 0 60px rgba(141,255,87,.3)}
+.btn-primary.lit:active{transform:translateY(0) scale(.98)}
+.btn-primary.lit .ru{opacity:.75}
+.btn-warn{color:#241500;background:linear-gradient(135deg,#ffd166,#ff9f43);border-color:#ffd166;
+  box-shadow:0 0 18px rgba(255,196,77,.5),0 8px 26px rgba(0,0,0,.45)}
+.btn-warn:active{transform:scale(.98)}
+.btn-again.lit{color:#041318;background:linear-gradient(135deg,#5ce9ff,#31b8e8);border-color:#5ce9ff;
+  box-shadow:0 0 16px rgba(51,230,255,.5),0 0 44px rgba(51,230,255,.22)}
+
+/* ============ ПРАВИЛА ============ */
+.rules-head{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.rules-badge{flex:0 0 52px;height:52px;display:grid;place-items:center;font:700 26px 'Unbounded';
+  color:var(--amber);border:1px solid rgba(255,196,77,.5);border-radius:14px;
+  background:rgba(255,196,77,.07);box-shadow:0 0 18px rgba(255,196,77,.22)}
+.rules-head h2{font:700 20px 'Unbounded'}
+.rules-head h2 .ru{display:block;font:italic 400 13px 'Rubik';margin-top:3px}
+.rules{list-style:none;margin:16px 0;display:grid;gap:10px}
+.rules li{position:relative;padding:12px 14px 12px 46px;border:1px solid var(--line);border-radius:12px;
+  background:rgba(10,16,32,.6);font:400 14px/1.5 'Rubik';transition:border-color .2s}
+.rules li:hover{border-color:rgba(51,230,255,.35)}
+.rules li::before{content:attr(data-n);position:absolute;left:12px;top:13px;width:22px;height:22px;
+  display:grid;place-items:center;font:700 11px 'Unbounded';color:var(--cyan);
+  border:1px solid rgba(51,230,255,.5);border-radius:7px;box-shadow:0 0 8px rgba(51,230,255,.25)}
+.rules b{color:var(--txt)}
+.rules .ru{display:block;font-size:12.5px;margin-top:2px}
+.check{display:flex;gap:10px;align-items:flex-start;font:500 14px/1.4 'Rubik';cursor:pointer;margin-bottom:16px;position:relative}
+.check input{position:absolute;opacity:0}
+.box{flex:0 0 22px;height:22px;border:1px solid var(--line);border-radius:7px;background:#0a1122;position:relative;transition:.2s;margin-top:1px}
+.check input:checked ~ .box{border-color:var(--lime);background:rgba(141,255,87,.12);box-shadow:0 0 12px rgba(141,255,87,.4)}
+.box::after{content:'✓';position:absolute;inset:0;display:grid;place-items:center;color:var(--lime);
+  font-weight:700;opacity:0;transform:scale(.4);transition:.2s}
+.check input:checked ~ .box::after{opacity:1;transform:scale(1)}
+
+/* ============ ЭКРАН ТЕСТА ============ */
+.t-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.t-meta{display:flex;flex-direction:column;gap:7px;min-width:0}
+.t-name{font:600 13px 'Rubik';color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw}
+.t-chips{display:flex;gap:7px;flex-wrap:wrap}
+.timer{position:relative;width:66px;height:66px;flex:0 0 auto}
+.timer svg{width:66px;height:66px;transform:rotate(-90deg)}
+.rbg{fill:none;stroke:rgba(120,160,255,.15);stroke-width:5}
+.rfg{fill:none;stroke:var(--cyan);stroke-width:5;stroke-linecap:round;
+  stroke-dasharray:226.2;stroke-dashoffset:0;transition:stroke .3s;
+  filter:drop-shadow(0 0 6px rgba(51,230,255,.7))}
+.t-num{position:absolute;inset:0;display:grid;place-items:center;font:700 13px 'Unbounded';color:var(--cyan)}
+.timer.low .rfg{stroke:var(--amber);filter:drop-shadow(0 0 6px rgba(255,196,77,.7))}
+.timer.low .t-num{color:var(--amber)}
+.timer.crit .rfg{stroke:var(--red);filter:drop-shadow(0 0 8px rgba(255,77,107,.8))}
+.timer.crit .t-num{color:var(--red);animation:blink 1s steps(2) infinite}
+.timer.crit{animation:throb .8s ease-in-out infinite}
+@keyframes throb{50%{transform:scale(1.07)}}
+@keyframes blink{50%{opacity:.45}}
+
+.progress{height:5px;border-radius:4px;background:rgba(120,160,255,.12);overflow:hidden;margin:14px 0 10px}
+.progress i{display:block;height:100%;width:0;border-radius:4px;
+  background:linear-gradient(90deg,var(--cyan),var(--lime));
+  box-shadow:0 0 10px rgba(51,230,255,.6);transition:width .5s cubic-bezier(.2,.8,.25,1)}
+.q-count{font:600 11.5px 'Unbounded';letter-spacing:1px;text-transform:uppercase;color:var(--mut);margin-bottom:10px}
+
+.q-card.qin{animation:qin .45s cubic-bezier(.2,.8,.25,1)}
+@keyframes qin{from{opacity:0;transform:translateY(14px)}}
+.q-top{display:flex;align-items:center;gap:10px}
+.q-badge{width:34px;height:34px;display:grid;place-items:center;font:700 14px 'Unbounded';
+  color:var(--cyan);border:1px solid rgba(51,230,255,.5);border-radius:10px;
+  box-shadow:0 0 12px rgba(51,230,255,.2)}
+.q-kz{font:600 18.5px/1.45 'Rubik';margin:14px 0 4px}
+.q-ru{font:italic 400 14px/1.4 'Rubik';color:var(--mut);margin-bottom:16px}
+
+.opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;
+  background:rgba(10,16,32,.7);border:1px solid var(--line);border-radius:14px;
+  padding:13px 14px;color:var(--txt);font:500 15px/1.45 'Rubik';cursor:pointer;
+  transition:border-color .2s,box-shadow .25s,transform .15s,background .2s;animation:optin .45s both}
+.opt:nth-of-type(2){animation-delay:.05s}.opt:nth-of-type(3){animation-delay:.1s}.opt:nth-of-type(4){animation-delay:.15s}
+@keyframes optin{from{opacity:0;transform:translateX(-10px)}}
+.opt:hover{border-color:rgba(51,230,255,.45);transform:translateX(3px)}
+.opt:active{transform:scale(.985)}
+.opt + .opt{margin-top:9px}
+.opt-l{flex:0 0 30px;height:30px;display:grid;place-items:center;font:700 13px 'Unbounded';
+  color:var(--cyan);border:1px solid rgba(51,230,255,.4);border-radius:9px;transition:.25s}
+.opt .ru{font-size:12.5px}
+.opt.selected{border-color:var(--cyan);background:rgba(51,230,255,.08);
+  box-shadow:0 0 0 1px var(--cyan),0 0 18px rgba(51,230,255,.35),0 0 42px rgba(51,230,255,.14),inset 0 0 14px rgba(51,230,255,.07);
+  animation:selpulse 1.8s ease-in-out infinite}
+.opt.selected .opt-l{background:var(--cyan);color:#041018;box-shadow:0 0 14px rgba(51,230,255,.7)}
+@keyframes selpulse{50%{box-shadow:0 0 0 1px var(--cyan),0 0 28px rgba(51,230,255,.5),0 0 56px rgba(51,230,255,.2),inset 0 0 18px rgba(51,230,255,.1)}}
+
+.ans-row{display:flex;gap:10px}
+.ans-inp{flex:1;font:700 22px 'Unbounded'!important;text-align:center;letter-spacing:1px}
+.ans-inp.filled{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 0 20px rgba(51,230,255,.35)}
+.neg{flex:0 0 56px;border-radius:12px;border:1px solid rgba(255,77,210,.45);background:rgba(255,77,210,.08);
+  color:var(--pink);font:700 26px 'Unbounded';cursor:pointer;transition:.2s}
+.neg:hover{box-shadow:0 0 14px rgba(255,77,210,.35)}
+.neg:active{transform:scale(.94)}
+.inp-hint{display:block;margin-top:9px;font:italic 400 12px 'Rubik';color:var(--mut)}
+
+.btn-next{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));margin-top:16px;z-index:5}
+
+/* ============ ОВЕРЛЕИ ============ */
+.overlay{position:fixed;inset:0;z-index:50;display:none;place-items:center;padding:20px;
+  background:rgba(3,5,12,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.overlay.on{display:grid;animation:fadein .3s}
+@keyframes fadein{from{opacity:0}}
+.warn-panel{max-width:440px;text-align:center;border-color:rgba(255,196,77,.5);
+  box-shadow:0 0 40px rgba(255,196,77,.18),0 24px 60px rgba(0,0,0,.6)}
+.warn-panel::before{background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+.warn-ico{font-size:54px;line-height:1;margin-bottom:10px;animation:wshake .6s;text-shadow:0 0 24px rgba(255,196,77,.8)}
+@keyframes wshake{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+.warn-panel h3{font:700 20px 'Unbounded';margin-bottom:10px;color:var(--amber)}
+.warn-panel p{font:400 14.5px/1.5 'Rubik';margin-bottom:8px}
+.warn-strong{color:var(--red);font-weight:600}
+.warn-panel .btn{margin-top:14px}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));
+  transform:translateX(-50%) translateY(20px);z-index:40;padding:12px 20px;border-radius:12px;
+  background:rgba(24,8,12,.95);border:1px solid rgba(255,77,107,.6);color:var(--red);
+  font:600 13px 'Rubik';box-shadow:0 0 22px rgba(255,77,107,.35);opacity:0;pointer-events:none;transition:.3s;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ============ РЕЗУЛЬТАТЫ ============ */
+.res{text-align:center}
+.res-status{display:inline-flex;padding:8px 16px;border-radius:99px;font:700 11.5px 'Unbounded';letter-spacing:.5px;margin-bottom:16px}
+.st-done{color:var(--lime);border:1px solid rgba(141,255,87,.5);background:rgba(141,255,87,.08);box-shadow:0 0 16px rgba(141,255,87,.25)}
+.st-cheat{color:var(--red);border:1px solid rgba(255,77,107,.55);background:rgba(255,77,107,.08);
+  box-shadow:0 0 16px rgba(255,77,107,.3);animation:blink 1.2s infinite}
+.score-ring{position:relative;width:172px;height:172px;margin:4px auto 8px}
+.score-ring svg{width:172px;height:172px;transform:rotate(-90deg)}
+.srbg{fill:none;stroke:rgba(120,160,255,.12);stroke-width:9}
+.srfg{fill:none;stroke:url(#sg);stroke-width:9;stroke-linecap:round;
+  stroke-dasharray:477.5;stroke-dashoffset:477.5;transition:stroke-dashoffset 1.2s cubic-bezier(.2,.8,.25,1);
+  filter:drop-shadow(0 0 8px rgba(51,230,255,.5))}
+.score-num{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px}
+.score-num b{font:800 42px 'Unbounded';color:var(--lime);text-shadow:0 0 24px rgba(141,255,87,.55)}
+.score-num span{font:600 13px 'Unbounded';color:var(--mut)}
+.res-grade{font:600 15px 'Rubik';margin-bottom:4px}
+.res-grade .ru{display:block;font-size:12.5px;margin-top:2px}
+.res-table{width:100%;border-collapse:collapse;margin:16px 0 6px;text-align:left}
+.res-table td{padding:10px 6px;border-bottom:1px solid rgba(120,160,255,.1);font:500 14px 'Rubik'}
+.res-table td:first-child{color:var(--mut);font-size:12.5px}
+.res-table td:last-child{text-align:right;font-weight:600}
+.sheet-note{min-height:16px;font:italic 400 12px 'Rubik';color:var(--mut);margin:10px 0 14px}
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+  <div class="fx f1">x²</div><div class="fx f2">D</div><div class="fx f3">√</div>
+  <div class="fx f4">±</div><div class="fx f5">x₁</div><div class="fx f6">Δ</div>
+</div>
+
+<main class="wrap">
+
+  <!-- ЭКРАН 1: СТАРТ -->
+  <section id="scr-start" class="screen on">
+    <div class="top-tag">
+      <span class="chip chip-cyan">Алгебра</span>
+      <span class="chip chip-line">8-сынып · 2026–2027 оқу жылы</span>
+    </div>
+    <h1 class="title">Квадрат үшмүше <em>және оның түбірлері</em></h1>
+    <p class="title-ru">Квадратный трёхчлен и его корни</p>
+    <div class="formula-strip" aria-hidden="true">
+      <span>D = b² − 4ac</span><i>✦</i><span>x₁,₂ = (−b ± √D) ∕ 2a</span>
+    </div>
+    <div class="teacher">
+      <div class="t-ico">∑</div>
+      <div>
+        <small>Математика мұғалімі · Учитель математики</small>
+        <b>Кунгозин Даулет Багдашұлы</b>
+      </div>
+    </div>
+    <div class="panel">
+      <label>Аты-жөніңіз <span class="ru">· ФИ ученика</span>
+        <input id="fio" type="text" placeholder="Введите ФИ" autocomplete="name">
+      </label>
+      <div class="row2">
+        <label>Сынып <span class="ru">· Класс</span>
+          <select id="cls"><option value="8 Ә">8 Ә</option></select>
+        </label>
+        <label>Нұсқа <span class="ru">· Вариант</span>
+          <select id="var">
+            <option value="" disabled selected>Таңдаңыз…</option>
+            <option value="1">Вариант 1</option>
+            <option value="2">Вариант 2</option>
+          </select>
+        </label>
+      </div>
+      <p id="att-hint" class="att-hint"></p>
+      <button id="btn-start" class="btn btn-primary" disabled>Жалғастыру <span class="ru">· Далее</span> →</button>
+    </div>
+    <p class="foot-note">Нәтижелер автоматты түрде сақталады · Результаты сохраняются автоматически</p>
+  </section>
+
+  <!-- ЭКРАН 2: ДИСКЛЕЙМЕР -->
+  <section id="scr-rules" class="screen">
+    <div class="panel">
+      <div class="rules-head">
+        <div class="rules-badge">§</div>
+        <h2>Тест ережесі <span class="ru">Правила теста</span></h2>
+      </div>
+      <ul class="rules">
+        <li data-n="1"><b>10 тапсырма</b> — әрқайсысы 1 балл, ең жоғары балл — 10.
+          <span class="ru">10 заданий — по 1 баллу, максимум 10 баллов.</span></li>
+        <li data-n="2"><b>Әр сұраққа — 1 мин 30 сек.</b> Уақыт бітсе, келесі сұраққа автоматты түрде өтеді.
+          <span class="ru">На вопрос — 1 мин 30 сек. Время вышло — автопереход дальше.</span></li>
+        <li data-n="3"><b>Артқа қайтуға болмайды.</b>
+          <span class="ru">Вернуться назад нельзя.</span></li>
+        <li data-n="4"><b>Античит:</b> тест кезінде басқа қосымшаға/бетке шығуға тыйым салынады.
+          1-рет — ескерту, 2-рет — тест автоматты түрде аяқталады.
+          <span class="ru">Выход из теста запрещён: 1-й раз — предупреждение, 2-й раз — автозавершение.</span></li>
+        <li data-n="5"><b>Әр өту — 1 попытка.</b> Барлық попыткалар есепке алынады.
+          <span class="ru">Каждое прохождение — 1 попытка, все попытки учитываются.</span></li>
+      </ul>
+      <label class="check">
+        <input type="checkbox" id="agree">
+        <span class="box"></span>
+        <span>Ережелермен таныстым <span class="ru">· С правилами ознакомлен(а)</span></span>
+      </label>
+      <button id="btn-begin" class="btn btn-primary" disabled>Тестті бастау <span class="ru">· Начать тест</span> ⚡</button>
+    </div>
+  </section>
+
+  <!-- ЭКРАН 3: ТЕСТ -->
+  <section id="scr-test" class="screen">
+    <header class="t-head">
+      <div class="t-meta">
+        <span class="t-name" id="t-name"></span>
+        <div class="t-chips">
+          <span class="chip chip-cyan" id="t-var"></span>
+          <span class="chip chip-line" id="t-att"></span>
+        </div>
+      </div>
+      <div class="timer" id="timerbox">
+        <svg viewBox="0 0 84 84">
+          <circle class="rbg" cx="42" cy="42" r="36"></circle>
+          <circle class="rfg" id="rfg" cx="42" cy="42" r="36"></circle>
+        </svg>
+        <div class="t-num" id="tnum">1:30</div>
+      </div>
+    </header>
+    <div class="progress"><i id="pbar"></i></div>
+    <div class="q-count" id="qnum">Сұрақ 1 / 10</div>
+    <article class="panel q-card" id="qcard">
+      <div class="q-top">
+        <span class="q-badge" id="qbadge">1</span>
+        <span class="chip" id="qtype">ТЕСТ</span>
+      </div>
+      <h3 class="q-kz" id="qkz"></h3>
+      <p class="q-ru" id="qru"></p>
+      <div id="qbody"></div>
+    </article>
+    <button id="btn-next" class="btn btn-primary btn-next" disabled>Келесі сұрақ <span class="ru">· Далее</span> →</button>
+  </section>
+
+  <!-- ЭКРАН 4: РЕЗУЛЬТАТЫ -->
+  <section id="scr-res" class="screen">
+    <div class="panel res">
+      <div class="res-status" id="res-status"></div>
+      <div class="score-ring">
+        <svg viewBox="0 0 172 172">
+          <defs>
+            <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#33e6ff"/><stop offset="1" stop-color="#8dff57"/>
+            </linearGradient>
+          </defs>
+          <circle class="srbg" cx="86" cy="86" r="76"></circle>
+          <circle class="srfg" id="srfg" cx="86" cy="86" r="76"></circle>
+        </svg>
+        <div class="score-num"><b id="score-big">0</b><span>/ 10 балл</span></div>
+      </div>
+      <div class="res-grade" id="res-grade"></div>
+      <table class="res-table">
+        <tr><td>Аты-жөні <i class="ru">· ФИ</i></td><td id="r-fio"></td></tr>
+        <tr><td>Сынып <i class="ru">· Класс</i></td><td id="r-cls"></td></tr>
+        <tr><td>Нұсқа <i class="ru">· Вариант</i></td><td id="r-var"></td></tr>
+        <tr><td>Балл <i class="ru">· Баллы</i></td><td id="r-score"></td></tr>
+        <tr><td>Попытка <i class="ru">· Попыток использовано</i></td><td id="r-att"></td></tr>
+        <tr><td>Күні <i class="ru">· Дата</i></td><td id="r-date"></td></tr>
+      </table>
+      <p class="sheet-note" id="sheet-note"></p>
+      <button id="btn-again" class="btn btn-again lit">↻ Қайта тапсыру <span class="ru">· Пройти ещё раз</span></button>
+    </div>
+  </section>
+</main>
+
+<!-- ПРЕДУПРЕЖДЕНИЕ АНТИЧИТА -->
+<div class="overlay" id="warn">
+  <div class="panel warn-panel">
+    <div class="warn-ico">⚠</div>
+    <h3>Ескерту! <span class="ru" style="color:var(--mut)">Предупреждение!</span></h3>
+    <p>Тест терезесінен шығу анықталды. <span class="ru">Зафиксирован уход из окна теста.</span></p>
+    <p class="warn-strong">Тағы бір рет қайталанса — тест автоматты түрде аяқталады!<br>
+      <span class="ru" style="color:var(--mut)">При повторе тест будет завершён автоматически!</span></p>
+    <button id="btn-warn-ok" class="btn btn-warn">Түсіндім, жалғастыру · Понятно</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+/* ================= НАСТРОЙКА ================= */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyokKKb8r9u0JfMoyohJlvXWj1qJ3O0AIJtRBdgOLEV6p2iRo2YtbiGpVewrscsRTcA_Q/exec"; // ← URL веб-приложения Apps Script (.../exec)
+const TIME_PER_Q = 90;   // 1 мин 30 сек на вопрос
+const TOTAL = 10;
+
+/* ================= БАНК ВОПРОСОВ ================= */
+const ch  = (kz, ru, opts, ans) => ({t:'ch', kz, ru, ans, o:opts.map(s => {const [k,r] = s.split('|'); return {k, r:r||''};})});
+const inp = (kz, ru, ans) => ({t:'in', kz, ru, ans});
+
+const BANK = {
+"1":[
+ ch("Квадрат үшмүше деп қандай өрнекті айтады?",
+    "Какое выражение называют квадратным трёхчленом?",
+    ["ax² + bx + c түріндегі көпмүше|Многочлен вида ax² + bx + c",
+     "ax + b түріндегі өрнек|Выражение вида ax + b",
+     "ax³ + bx² + cx түріндегі көпмүше|Многочлен вида ax³ + bx² + cx",
+     "a∕x + b түріндегі өрнек|Выражение вида a/x + b"],0),
+ ch("x² − 5x + 6 квадрат үшмүшесінің дискриминантын табыңыз.",
+    "Найдите дискриминант квадратного трёхчлена x² − 5x + 6.",
+    ["−1","1","11","25"],1),
+ ch("Егер D > 0 болса, квадрат үшмүшенің қанша түбірі бар?",
+    "Сколько корней имеет квадратный трёхчлен, если D > 0?",
+    ["1|один","0|ноль","2|два","Шексіз көп|бесконечно много"],2),
+ ch("Квадрат үшмүшені көбейткіштерге жіктеу формуласын көрсетіңіз:",
+    "Укажите формулу разложения квадратного трёхчлена на множители:",
+    ["a(x + x₁)(x + x₂)","x²(x − x₁)(x − x₂)","ax(x − x₁)","a(x − x₁)(x − x₂)"],3),
+ ch("Төмендегілердің қайсысы квадрат үшмүше болып табылады?",
+    "Какое из выражений является квадратным трёхчленом?",
+    ["2x² − 3x + 1","3x + 5","x³ − 2x + 1","4∕x − 7"],0),
+ inp("2x² − 5x + 2 квадрат үшмүшесінің дискриминантын табыңыз.",
+     "Найдите дискриминант квадратного трёхчлена 2x² − 5x + 2.",9),
+ inp("x² − 9x + 20 квадрат үшмүшесі түбірлерінің қосындысын табыңыз.",
+     "Найдите сумму корней квадратного трёхчлена x² − 9x + 20.",9),
+ inp("x² + 4x − 21 квадрат үшмүшесі түбірлерінің көбейтіндісін табыңыз.",
+     "Найдите произведение корней квадратного трёхчлена x² + 4x − 21.",-21),
+ inp("x² − 7x + 12 = 0 теңдеуінің кіші түбірін табыңыз.",
+     "Найдите меньший корень уравнения x² − 7x + 12 = 0.",3),
+ inp("x² + x − 6 = 0 теңдеуінің үлкен түбірін табыңыз.",
+     "Найдите больший корень уравнения x² + x − 6 = 0.",2)
+],
+"2":[
+ ch("ax² + bx + c квадрат үшмүшесіндегі c қалай аталады?",
+    "Как называется c в квадратном трёхчлене ax² + bx + c?",
+    ["Бірінші коэффициент|первый коэффициент","Екінші коэффициент|второй коэффициент",
+     "Бос мүше|свободный член","Дискриминант|дискриминант"],2),
+ ch("x² + 3x − 10 квадрат үшмүшесінің дискриминантын табыңыз.",
+    "Найдите дискриминант квадратного трёхчлена x² + 3x − 10.",
+    ["−31","31","19","49"],3),
+ ch("Егер D = 0 болса, квадрат үшмүшенің қанша түбірі бар?",
+    "Сколько корней у квадратного трёхчлена, если D = 0?",
+    ["1|один","2|два","0|ноль","3|три"],0),
+ ch("x² + px + q = 0 теңдеуі үшін Виет теоремасын көрсетіңіз:",
+    "Укажите теорему Виета для уравнения x² + px + q = 0:",
+    ["x₁ + x₂ = p; x₁ · x₂ = q","x₁ + x₂ = −p; x₁ · x₂ = q",
+     "x₁ + x₂ = −p; x₁ · x₂ = −q","x₁ · x₂ = p; x₁ + x₂ = q"],1),
+ ch("Төмендегілердің қайсысы квадрат үшмүше емес?",
+    "Какое из выражений не является квадратным трёхчленом?",
+    ["x² + 2x − 3","0,5x² − 1","−4x² + x + 9","5x − 7"],3),
+ inp("3x² − 4x + 1 квадрат үшмүшесінің дискриминантын табыңыз.",
+     "Найдите дискриминант квадратного трёхчлена 3x² − 4x + 1.",4),
+ inp("x² − 11x + 30 квадрат үшмүшесі түбірлерінің қосындысын табыңыз.",
+     "Найдите сумму корней квадратного трёхчлена x² − 11x + 30.",11),
+ inp("x² − 2x − 15 квадрат үшмүшесі түбірлерінің көбейтіндісін табыңыз.",
+     "Найдите произведение корней квадратного трёхчлена x² − 2x − 15.",-15),
+ inp("x² − 9x + 18 = 0 теңдеуінің үлкен түбірін табыңыз.",
+     "Найдите больший корень уравнения x² − 9x + 18 = 0.",6),
+ inp("x² + x − 12 = 0 теңдеуінің кіші түбірін табыңыз.",
+     "Найдите меньший корень уравнения x² + x − 12 = 0.",-4)
+]};
+
+/* ================= ХЕЛПЕРЫ ================= */
+const $ = id => document.getElementById(id);
+const show = id => {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+  $(id).classList.add('on');
+  window.scrollTo(0, 0);
+};
+const fmtT = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+const esc  = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* ================= СОСТОЯНИЕ ================= */
+const state = {fio:'', cls:'8 Ә', variant:'', idx:0, score:0, attempt:0, finished:false, startedAt:0};
+let QUESTIONS = [], curSel = null, curVal = '', navLock = false;
+let tId = null, deadline = 0;
+const CIRC = 2*Math.PI*36;
+
+/* Попытки (по ФИО+классу) */
+const ATT_KEY = 'kv8_att_v1';
+let attStore = {};
+try { attStore = JSON.parse(localStorage.getItem(ATT_KEY) || '{}'); } catch(e){ attStore = {}; }
+const attKeyFor = f => f.trim().toLowerCase().replace(/\s+/g,' ') + '|' + state.cls;
+const getAtt = k => attStore[k] || 0;
+function bumpAtt(){
+  const k = attKeyFor(state.fio);
+  attStore[k] = getAtt(k) + 1;
+  try { localStorage.setItem(ATT_KEY, JSON.stringify(attStore)); } catch(e){}
+  return attStore[k];
+}
+
+/* ================= ЭКРАН СТАРТА ================= */
+function checkStart(){
+  const ok = $('fio').value.trim().length >= 3 && !!$('var').value;
+  $('btn-start').disabled = !ok;
+  $('btn-start').classList.toggle('lit', ok);
+}
+function updAttHint(){
+  const el = $('att-hint'), f = $('fio').value;
+  if (f.trim().length >= 3){
+    const n = getAtt(attKeyFor(f));
+    el.textContent = n ? `Попыток использовано: ${n} · Осы оқушы бұрын ${n} рет тапсырған`
+                       : `Бірінші попытка · Это ваша первая попытка`;
+    el.classList.toggle('warned', n > 0);
+  } else el.textContent = '';
+}
+$('fio').addEventListener('input', () => { checkStart(); updAttHint(); });
+$('var').addEventListener('change', checkStart);
+$('btn-start').addEventListener('click', () => {
+  state.fio = $('fio').value.trim();
+  state.variant = $('var').value;
+  show('scr-rules');
+});
+$('agree').addEventListener('change', () => {
+  const ok = $('agree').checked;
+  $('btn-begin').disabled = !ok;
+  $('btn-begin').classList.toggle('lit', ok);
+});
+$('btn-begin').addEventListener('click', startTest);
+
+/* ================= ЗАПУСК ТЕСТА ================= */
+function startTest(){
+  state.attempt = bumpAtt();
+  state.idx = 0; state.score = 0; state.finished = false;
+  state.startedAt = Date.now();
+  QUESTIONS = BANK[state.variant];
+  $('t-name').textContent = state.fio;
+  $('t-var').textContent = 'Нұсқа ' + state.variant;
+  $('t-att').textContent = 'Попытка ' + state.attempt;
+  armAntiCheat();
+  show('scr-test');
+  renderQ();
+}
+
+/* ================= РЕНДЕР ВОПРОСА ================= */
+function renderQ(){
+  navLock = false; curSel = null; curVal = '';
+  const q = QUESTIONS[state.idx];
+  $('qnum').textContent = `Сұрақ ${state.idx+1} / ${TOTAL}`;
+  $('qbadge').textContent = state.idx + 1;
+  $('pbar').style.width = ((state.idx+1)/TOTAL*100) + '%';
+  const qt = $('qtype');
+  qt.textContent = q.t === 'ch' ? 'Тест' : 'Есеп';
+  qt.className = 'chip ' + (q.t === 'ch' ? 'chip-cyan' : 'chip-pink');
+  $('qkz').textContent = q.kz;
+  $('qru').textContent = q.ru;
+
+  const body = $('qbody'); body.innerHTML = '';
+  const next = $('btn-next'); next.disabled = true; next.classList.remove('lit');
+  next.innerHTML = state.idx === TOTAL-1
+    ? 'Тестті аяқтау <span class="ru">· Завершить</span> ✓'
+    : 'Келесі сұрақ <span class="ru">· Далее</span> →';
+
+  if (q.t === 'ch'){
+    q.o.forEach((o, i) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'opt';
+      b.innerHTML = `<span class="opt-l">${'ABCD'[i]}</span><span class="opt-t">${esc(o.k)}${o.r ? ` <i class="ru">· ${esc(o.r)}</i>` : ''}</span>`;
+      b.addEventListener('click', () => {
+        body.querySelectorAll('.opt').forEach(x => x.classList.remove('selected'));
+        b.classList.add('selected');
+        curSel = i;
+        next.disabled = false; next.classList.add('lit');
+      });
+      body.appendChild(b);
+    });
+  } else {
+    const row = document.createElement('div'); row.className = 'ans-row';
+    const inEl = document.createElement('input');
+    inEl.type = 'text'; inEl.inputMode = 'text'; inEl.autocomplete = 'off';
+    inEl.spellcheck = false; inEl.className = 'ans-inp';
+    inEl.placeholder = 'Жауап: сан';
+    const neg = document.createElement('button');
+    neg.type = 'button'; neg.className = 'neg'; neg.textContent = '−';
+    neg.title = 'Теріс таңбасы · Знак минуса';
+    neg.addEventListener('click', () => {
+      const v = inEl.value.trim();
+      inEl.value = v.startsWith('-') ? v.slice(1) : '-' + v.replace(/-/g,'');
+      inEl.dispatchEvent(new Event('input'));
+      inEl.focus();
+    });
+    inEl.addEventListener('input', () => {
+      let v = inEl.value.replace(/−/g,'-').replace(/[^0-9.,-]/g,'')
+                .replace(/,/g,'.').replace(/(?!^)-/g,'').slice(0,8);
+      if (v !== inEl.value) inEl.value = v;
+      curVal = v;
+      const has = v.trim() !== '';
+      inEl.classList.toggle('filled', has);
+      next.disabled = !has; next.classList.toggle('lit', has);
+    });
+    inEl.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !next.disabled) goNext(false);
+    });
+    const hint = document.createElement('small'); hint.className = 'inp-hint';
+    hint.textContent = 'Жауапты сан түрінде енгізіңіз (мысалы: 5; −4; 2,5) · Введите ответ числом (например: 5; −4; 2,5)';
+    row.append(inEl, neg);
+    body.append(row, hint);
+  }
+  const card = $('qcard');
+  card.classList.remove('qin'); void card.offsetWidth; card.classList.add('qin');
+  startTimer();
+}
+
+/* ================= ТАЙМЕР ================= */
+function startTimer(){
+  deadline = Date.now() + TIME_PER_Q*1000;
+  clearInterval(tId);
+  tId = setInterval(tickTimer, 200);
+  tickTimer();
+}
+function tickTimer(){
+  const left = Math.max(0, deadline - Date.now());
+  const s = Math.ceil(left/1000);
+  $('tnum').textContent = fmtT(s);
+  $('rfg').style.strokeDashoffset = String(CIRC * (1 - left/(TIME_PER_Q*1000)));
+  const tb = $('timerbox');
+  tb.classList.toggle('low',  s <= 30 && s > 10);
+  tb.classList.toggle('crit', s <= 10);
+  if (left <= 0){ clearInterval(tId); onTimeout(); }
+}
+function onTimeout(){
+  if (navLock || state.finished) return;
+  toastMsg('⏱ Уақыт бітті! · Время вышло!');
+  goNext(true);
+}
+let toastId = null;
+function toastMsg(t){
+  const el = $('toast'); el.textContent = t; el.classList.add('on');
+  clearTimeout(toastId); toastId = setTimeout(() => el.classList.remove('on'), 1500);
+}
+
+/* ================= ПЕРЕХОДЫ / ОЦЕНКА ================= */
+function numEq(v, ans){
+  if (v == null || String(v).trim() === '') return false;
+  const n = parseFloat(String(v).replace(',', '.'));
+  return Number.isFinite(n) && Math.abs(n - ans) < 1e-6;
+}
+function goNext(fromTimer){
+  if (navLock || state.finished) return;
+  if (!fromTimer && $('btn-next').disabled) return;
+  navLock = true;
+  clearInterval(tId);
+  const q = QUESTIONS[state.idx];
+  const ok = q.t === 'ch' ? (curSel === q.ans) : numEq(curVal, q.ans);
+  if (ok) state.score++;
+  state.idx++;
+  setTimeout(() => {
+    navLock = false;
+    if (state.idx >= TOTAL) finish('done'); else renderQ();
+  }, fromTimer ? 950 : 140);
+}
+$('btn-next').addEventListener('click', () => goNext(false));
+
+/* ================= АНТИЧИТ ================= */
+/* Логика: 1-е нарушение → предупреждение, 2-е → автозавершение теста.
+   Ложные срабатывания на iOS/клавиатуре отфильтрованы:
+   - клавиатура определяется по фокусу ввода + visualViewport;
+   - краткие «скрытия» (<1.5 с) и мгновенный возврат фокуса игнорируются. */
+let armed = false, violations = 0, hiddenTimer = null;
+let refocusAt = 0, cooldownUntil = 0, lastInpFocus = 0, kbOpen = false;
+
+const vv = window.visualViewport;
+if (vv) vv.addEventListener('resize', () => {
+  const ae = document.activeElement;
+  kbOpen = !!(ae && ae.tagName === 'INPUT') && vv.height < window.innerHeight * 0.78;
+});
+document.addEventListener('focusin', e => { if (e.target.tagName === 'INPUT') lastInpFocus = performance.now(); });
+
+function kbLikely(){
+  const ae = document.activeElement;
+  return (ae && ae.tagName === 'INPUT') || kbOpen || (performance.now() - lastInpFocus < 1500);
+}
+function armAntiCheat(){
+  armed = true; violations = 0;
+  try { history.pushState({kv:1}, '', location.href); } catch(e){}
+}
+function violation(){
+  if (!armed || state.finished) return;
+  if (performance.now() < cooldownUntil) return;
+  violations++;
+  if (violations === 1){
+    cooldownUntil = performance.now() + 2000;
+    $('warn').classList.add('on');
+  } else terminate();
+}
+$('btn-warn-ok').addEventListener('click', () => {
+  $('warn').classList.remove('on');
+  cooldownUntil = performance.now() + 1500;
+});
+/* Сворачивание вкладки/браузера */
+document.addEventListener('visibilitychange', () => {
+  if (!armed || state.finished) return;
+  if (document.hidden){
+    clearTimeout(hiddenTimer);
+    hiddenTimer = setTimeout(() => violation(), 1500); // фильтр коротких «мерцаний»
+  } else clearTimeout(hiddenTimer);
+});
+/* Потеря фокуса окном (второе окно Samsung, шторка iPhone и т.п.) */
+window.addEventListener('blur', () => {
+  if (!armed || state.finished) return;
+  if (kbLikely()) return;                 // не реагируем на выдвижение клавиатуры
+  setTimeout(() => {
+    if (!armed || state.finished) return;
+    if (document.visibilityState === 'hidden') return; // учтено через visibilitychange
+    if (performance.now() - refocusAt < 400) return;   // фокус сразу вернулся (ложное)
+    violation();
+  }, 900);
+});
+window.addEventListener('focus', () => { refocusAt = performance.now(); });
+/* Попытка «назад» */
+window.addEventListener('popstate', () => {
+  if (armed && !state.finished){
+    try { history.pushState({kv:1}, '', location.href); } catch(e){}
+    violation();
+  }
+});
+/* Закрытие страницы во время теста */
+window.addEventListener('pagehide', () => {
+  if (armed && !state.finished){ finish('closed', true); }
+});
+document.addEventListener('gesturestart', e => e.preventDefault());
+
+/* ================= ЗАВЕРШЕНИЕ ================= */
+function terminate(){ finish('anticheat'); }
+function finish(reason, beaconOnly = false){
+  if (state.finished) return;
+  state.finished = true; armed = false;
+  clearInterval(tId); clearTimeout(hiddenTimer);
+  const dur = Math.round((Date.now() - state.startedAt)/1000);
+  const status = reason === 'done'     ? 'Завершён'
+               : reason === 'anticheat'? 'Прерван (античит)'
+               :                         'Прерван (закрытие)';
+  const payload = {
+    ts: new Date().toISOString(),
+    fio: state.fio, cls: state.cls, variant: state.variant,
+    score: state.score, attempt: state.attempt, status, dur
+  };
+  if (beaconOnly){ sendBeacon(payload); return; }
+  sendToSheets(payload);
+  showResults(reason);
+}
+function sendBeacon(p){
+  try {
+    const body = JSON.stringify(p);
+    if (navigator.sendBeacon && GAS_URL.startsWith('https://'))
+      navigator.sendBeacon(GAS_URL, new Blob([body], {type:'text/plain;charset=utf-8'}));
+  } catch(e){}
+}
+function sendToSheets(p){
+  const note = $('sheet-note');
+  if (!GAS_URL.startsWith('https://')){
+    note.textContent = 'Google Sheets: GAS_URL орнатылмаған · Настройте GAS_URL в index.html';
+    return;
+  }
+  fetch(GAS_URL, {method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(p)})
+    .then(() => note.textContent = '✓ Нәтиже Google Sheets-ке жіберілді · Результат отправлен в Google Sheets')
+    .catch(() => note.textContent = 'Нәтиже жіберілмеді (желі жоқ) · Не отправлено (нет сети)');
+}
+function showResults(reason){
+  const st = $('res-status');
+  if (reason === 'done'){
+    st.className = 'res-status st-done';
+    st.textContent = '✓ Тест аяқталды · Тест завершён';
+  } else {
+    st.className = 'res-status st-cheat';
+    st.textContent = '⛔ Античит: тест тоқтатылды · Тест прерван';
+  }
+  $('r-fio').textContent = state.fio;
+  $('r-cls').textContent = state.cls;
+  $('r-var').textContent = state.variant;
+  $('r-score').textContent = state.score + ' / 10';
+  $('r-att').textContent = state.attempt;
+  $('r-date').textContent = new Date().toLocaleString('ru-RU',
+    {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const g = $('res-grade');
+  if (reason === 'done'){
+    const [a, b] = state.score === 10 ? ['Керемет нәтиже!','Отличный результат!']
+      : state.score >= 8 ? ['Өте жақсы!','Очень хорошо!']
+      : state.score >= 5 ? ['Жақсы, бірақ тағы да жаттығуға болады.','Хорошо, но можно лучше.']
+      : ['Тақырыпты қайталап, тағы көріңіз.','Повторите тему и попробуйте ещё раз.'];
+    g.innerHTML = `${a}<span class="ru">${b}</span>`;
+  } else {
+    g.innerHTML = `Тест ережесі бұзылды (шығу анықталды).<span class="ru">Нарушение правил (зафиксирован выход из теста).</span>`;
+  }
+  show('scr-res');
+  /* Анимация балла */
+  const big = $('score-big'), target = state.score, t0 = performance.now();
+  (function step(t){
+    const p = Math.min(1, (t - t0)/900), e = 1 - Math.pow(1 - p, 3);
+    big.textContent = Math.round(target * e);
+    if (p < 1) requestAnimationFrame(step);
+  })(t0);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $('srfg').style.strokeDashoffset = String(477.5 * (1 - state.score/TOTAL));
+  }));
+}
+$('btn-again').addEventListener('click', () => {
+  $('agree').checked = false;
+  $('btn-begin').disabled = true; $('btn-begin').classList.remove('lit');
+  updAttHint(); checkStart();
+  show('scr-start');
+});
+</script>
+</body>
+</html>
